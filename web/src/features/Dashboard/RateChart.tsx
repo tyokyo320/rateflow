@@ -67,7 +67,10 @@ function RateChart({ pair, days, onDaysChange }: RateChartProps) {
     // For small values (< 1), use decimal precision
     if (max < 1) {
       // Calculate appropriate decimal places based on the value magnitude
-      const decimals = Math.max(4, Math.ceil(-Math.log10(range)) + 2)
+      // Clamp decimals between 4 and 10 to avoid toFixed() errors
+      const decimals = range > 0
+        ? Math.min(10, Math.max(4, Math.ceil(-Math.log10(range)) + 2))
+        : 6
       const padding = range * 0.15 || 0.001 // 15% padding
 
       return {
