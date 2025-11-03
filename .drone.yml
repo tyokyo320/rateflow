@@ -31,11 +31,8 @@ steps:
     tags:
       - ${DRONE_COMMIT_SHA:0:8}
       - ${DRONE_BRANCH}
+      - ${DRONE_TAG}
       - latest
-  when:
-    branch:
-      - master
-      - develop
 
 - name: build-and-push-worker
   image: plugins/docker
@@ -50,11 +47,8 @@ steps:
     tags:
       - ${DRONE_COMMIT_SHA:0:8}
       - ${DRONE_BRANCH}
+      - ${DRONE_TAG}
       - latest
-  when:
-    branch:
-      - master
-      - develop
 
 - name: build-and-push-web
   image: plugins/docker
@@ -70,11 +64,8 @@ steps:
     tags:
       - ${DRONE_COMMIT_SHA:0:8}
       - ${DRONE_BRANCH}
+      - ${DRONE_TAG}
       - latest
-  when:
-    branch:
-      - master
-      - develop
 
 - name: send-telegram-notification-end
   image: appleboy/drone-telegram
@@ -102,3 +93,4 @@ steps:
 trigger:
   event:
   - push
+  - tag
