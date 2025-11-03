@@ -409,12 +409,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.1.6",
+	Version:          "1.2.0",
 	Host:             "localhost:8080",
 	BasePath:         "/",
 	Schemes:          []string{"http", "https"},
 	Title:            "RateFlow API",
-	Description:      "Exchange rate tracking service for UnionPay CNY/JPY rates\n\nThis API provides access to historical and current exchange rates\nbetween Chinese Yuan (CNY) and Japanese Yen (JPY) from UnionPay.",
+	Description:      "Multi-currency exchange rate tracking service powered by UnionPay\n\nThis API provides access to historical and current exchange rates\nfor 1,920+ currency pairs from UnionPay (12 base × 160+ target currencies).",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
