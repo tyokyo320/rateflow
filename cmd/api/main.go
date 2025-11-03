@@ -23,11 +23,11 @@ import (
 
 const (
 	serviceName    = "rateflow-api"
-	serviceVersion = "1.1.3"
+	serviceVersion = "1.1.4"
 )
 
 // @title RateFlow API
-// @version 1.1.3
+// @version 1.1.4
 // @description Exchange rate tracking service for UnionPay CNY/JPY rates
 // @description
 // @description This API provides access to historical and current exchange rates

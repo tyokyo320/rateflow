@@ -22,7 +22,7 @@ steps:
   image: plugins/docker
   settings:
     registry: harbor.tyokyo320.com
-    repo: harbor.tyokyo320.com/rateflow/api
+    repo: harbor.tyokyo320.com/rateflow/rateflow-api
     username:
       from_secret: harbor_username
     password:
@@ -41,7 +41,7 @@ steps:
   image: plugins/docker
   settings:
     registry: harbor.tyokyo320.com
-    repo: harbor.tyokyo320.com/rateflow/worker
+    repo: harbor.tyokyo320.com/rateflow/rateflow-worker
     username:
       from_secret: harbor_username
     password:
@@ -60,7 +60,7 @@ steps:
   image: plugins/docker
   settings:
     registry: harbor.tyokyo320.com
-    repo: harbor.tyokyo320.com/rateflow/web
+    repo: harbor.tyokyo320.com/rateflow/rateflow-web
     username:
       from_secret: harbor_username
     password:

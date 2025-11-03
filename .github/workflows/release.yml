@@ -150,7 +150,7 @@ jobs:
 
             ### Using Kubernetes
             ```bash
-            # Update image tags in deploy/k8s/api/kustomization.yaml and deploy/k8s/worker/kustomization.yaml
+            # Update image tags in deploy/k8s/*/kustomization.yaml
             kubectl apply -k deploy/k8s
             ```
 
