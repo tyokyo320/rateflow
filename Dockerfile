@@ -50,8 +50,8 @@ COPY --from=builder /build/rateflow-api .
 # Copy Swagger documentation
 COPY --from=builder /build/docs ./docs
 
-# Copy config files (if exists)
-COPY --from=builder /build/config.yml* ./
+# Copy config example file
+COPY --from=builder /build/config.json.example ./
 
 # Change ownership
 RUN chown -R app:app /app
