@@ -18,6 +18,44 @@ steps:
       🔀 *Branch*: {{ commit.branch }}
       🌐 *Goto*: [Build Page]({{ build.link }})
 
+- name: build-and-push-api
+  image: plugins/docker
+  settings:
+    registry: harbor.tyokyo320.com
+    repo: harbor.tyokyo320.com/rateflow/api
+    username:
+      from_secret: harbor_username
+    password:
+      from_secret: harbor_password
+    dockerfile: Dockerfile
+    tags:
+      - ${DRONE_COMMIT_SHA:0:8}
+      - ${DRONE_BRANCH}
+      - latest
+  when:
+    branch:
+      - master
+      - develop
+
+- name: build-and-push-worker
+  image: plugins/docker
+  settings:
+    registry: harbor.tyokyo320.com
+    repo: harbor.tyokyo320.com/rateflow/worker
+    username:
+      from_secret: harbor_username
+    password:
+      from_secret: harbor_password
+    dockerfile: deploy/docker/worker.Dockerfile
+    tags:
+      - ${DRONE_COMMIT_SHA:0:8}
+      - ${DRONE_BRANCH}
+      - latest
+  when:
+    branch:
+      - master
+      - develop
+
 - name: ssh commands
   image: appleboy/drone-ssh
   settings:
