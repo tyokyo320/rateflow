@@ -21,13 +21,15 @@ steps:
 - name: ssh commands
   image: appleboy/drone-ssh
   settings:
-    host: 172.17.0.1
-    username: zhangqiang
+    host:
+      from_secret: ssh_host
+    username:
+      from_secret: ssh_username
     key:
       from_secret: id_rsa
     port: 22
     script:
-      - | 
+      - |
         if [ -d "docker/rateflow" ]; then
           cd docker/rateflow && git pull
         else

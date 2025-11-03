@@ -79,7 +79,8 @@ rateflow/
 1. **克隆仓库**
 
 ```bash
-cd /home/zhangqiang/work/repos/union-pay
+git clone https://github.com/tyokyo320/rateflow.git
+cd rateflow
 ```
 
 2. **启动依赖服务**
