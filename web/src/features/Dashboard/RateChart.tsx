@@ -138,7 +138,7 @@ function RateChart({ pair, days, onDaysChange }: RateChartProps) {
 
   const handleCustomDaysApply = () => {
     const numDays = parseInt(customDays, 10)
-    if (numDays > 0 && numDays <= 365) {
+    if (numDays > 0) {
       onDaysChange(numDays)
       handleCustomRangeClose()
     }
@@ -205,8 +205,8 @@ function RateChart({ pair, days, onDaysChange }: RateChartProps) {
                 size="small"
                 value={customDays}
                 onChange={(e) => setCustomDays(e.target.value)}
-                inputProps={{ min: 1, max: 365 }}
-                helperText={t('chart.maxDays')}
+                inputProps={{ min: 1 }}
+                helperText={t('chart.enterDays')}
                 autoFocus
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
@@ -256,7 +256,13 @@ function RateChart({ pair, days, onDaysChange }: RateChartProps) {
             />
             <Tooltip
               formatter={(value: number) => formatRate(value, 6)}
-              labelFormatter={(label) => `${t('table.date')}: ${label}`}
+              labelFormatter={(label, payload) => {
+                if (payload && payload.length > 0) {
+                  const fullDate = payload[0].payload.fullDate
+                  return `${t('table.date')}: ${formatDate(fullDate, 'YYYY-MM-DD')}`
+                }
+                return `${t('table.date')}: ${label}`
+              }}
               contentStyle={{
                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
                 border: '1px solid #ccc',

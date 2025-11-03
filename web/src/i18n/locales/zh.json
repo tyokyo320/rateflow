@@ -23,7 +23,7 @@
     "custom": "自定义",
     "customRange": "自定义日期范围",
     "numberOfDays": "天数",
-    "maxDays": "最多 365 天",
+    "enterDays": "输入天数",
     "apply": "应用",
     "cancel": "取消"
   },
