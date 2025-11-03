@@ -168,7 +168,7 @@ function RateHistoryTable({ pair }: RateHistoryTableProps) {
             rowsPerPageOptions={[5, 10, 25, 50]}
             labelRowsPerPage={t('table.rowsPerPage')}
             labelDisplayedRows={({ from, to, count }) =>
-              t('table.displayedRows', { from, to, count: count !== -1 ? count : `${to}+` })
+              t('table.displayedRows', { from, to, count: typeof count === 'number' ? count : Number(count) })
             }
           />
         </>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { Grid, Paper, Typography, Box, Alert } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import CurrentRateCard from './CurrentRateCard'
