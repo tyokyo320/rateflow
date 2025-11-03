@@ -1,6 +1,6 @@
 ---
 kind: pipeline
-type: docker
+type: kubernetes
 name: default
 
 steps:
@@ -56,7 +56,7 @@ steps:
       - master
       - develop
 
-- name: ssh commands
+- name: ssh-commands
   image: appleboy/drone-ssh
   settings:
     host:
@@ -77,6 +77,10 @@ steps:
 
 - name: send-telegram-notification-end
   image: appleboy/drone-telegram
+  when:
+    status:
+      - success
+      - failure
   settings:
     token:
       from_secret: telegram_api_key
