@@ -30,9 +30,26 @@ func NewRateRepository(db *gorm.DB, logger *slog.Logger) rate.Repository {
 }
 
 // Create inserts a new rate into the database.
+// If a rate with the same (base, quote, date, source) exists, it updates the existing rate.
 func (r *RateRepository) Create(ctx context.Context, entity *rate.Rate) error {
 	model := r.domainToModel(entity)
-	return r.db.WithContext(ctx).Create(model).Error
+
+	// Use ON CONFLICT DO UPDATE to handle duplicates gracefully
+	// This ensures idempotent behavior when re-running fetch commands
+	result := r.db.WithContext(ctx).
+		Where(&RateModel{
+			BaseCurrency:  model.BaseCurrency,
+			QuoteCurrency: model.QuoteCurrency,
+			EffectiveDate: model.EffectiveDate,
+			Source:        model.Source,
+		}).
+		Assign(&RateModel{
+			Value:     model.Value,
+			UpdatedAt: time.Now(),
+		}).
+		FirstOrCreate(model)
+
+	return result.Error
 }
 
 // FindByID retrieves a rate by its ID.
