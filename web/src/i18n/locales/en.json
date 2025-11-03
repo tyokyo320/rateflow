@@ -1,0 +1,74 @@
+{
+  "app": {
+    "title": "RateFlow",
+    "subtitle": "Exchange Rate Tracker",
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "dashboard": {
+    "title": "Exchange Rate Monitor",
+    "currentRate": "Current Rate",
+    "rateTrend": "Rate Trend",
+    "historicalData": "Historical Data",
+    "dataSource": "Source",
+    "updatedAt": "Updated",
+    "noData": "No data available",
+    "invertRate": "Invert Rate",
+    "sameCurrencyWarning": "Please select different currencies. Exchange rate for {{pair}} is always 1.00"
+  },
+  "chart": {
+    "days": "{{count}} Days",
+    "daysUnit": "d",
+    "rate": "Rate",
+    "custom": "Custom",
+    "customRange": "Custom Date Range",
+    "numberOfDays": "Number of Days",
+    "maxDays": "Max 365 days",
+    "apply": "Apply",
+    "cancel": "Cancel"
+  },
+  "table": {
+    "date": "Date",
+    "pair": "Pair",
+    "rate": "Rate",
+    "source": "Source",
+    "updatedAt": "Updated",
+    "rowsPerPage": "Rows per page:",
+    "displayedRows": "{{from}}-{{to}} of {{count}}"
+  },
+  "error": {
+    "loadFailed": "Load Failed",
+    "cannotLoadChart": "Cannot load chart data",
+    "cannotLoadHistory": "Cannot load historical data",
+    "cannotGetRate": "Cannot get exchange rate",
+    "retry": "Retry"
+  },
+  "loading": {
+    "loading": "Loading...",
+    "loadingChart": "Loading chart data...",
+    "loadingHistory": "Loading historical data..."
+  },
+  "currency": {
+    "pair": "Currency Pair",
+    "base": "Base",
+    "quote": "Quote",
+    "swap": "Swap currencies"
+  },
+  "stats": {
+    "title": "30-Day Statistics",
+    "change24h": "30-Day Change",
+    "high": "High",
+    "low": "Low",
+    "average": "Average"
+  },
+  "converter": {
+    "title": "Currency Converter",
+    "amount": "Amount",
+    "result": "Result"
+  },
+  "footer": {
+    "madeWith": "Made with",
+    "by": "by",
+    "openSource": "Open Source"
+  }
+}

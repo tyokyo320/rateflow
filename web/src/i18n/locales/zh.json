@@ -1,0 +1,74 @@
+{
+  "app": {
+    "title": "RateFlow",
+    "subtitle": "汇率追踪平台",
+    "online": "在线",
+    "offline": "离线"
+  },
+  "dashboard": {
+    "title": "汇率监控",
+    "currentRate": "当前汇率",
+    "rateTrend": "汇率走势",
+    "historicalData": "历史数据",
+    "dataSource": "数据源",
+    "updatedAt": "更新时间",
+    "noData": "暂无数据",
+    "invertRate": "倒数转换",
+    "sameCurrencyWarning": "请选择不同的货币。{{pair}} 的汇率始终为 1.00"
+  },
+  "chart": {
+    "days": "{{count}}天",
+    "daysUnit": "天",
+    "rate": "汇率",
+    "custom": "自定义",
+    "customRange": "自定义日期范围",
+    "numberOfDays": "天数",
+    "maxDays": "最多 365 天",
+    "apply": "应用",
+    "cancel": "取消"
+  },
+  "table": {
+    "date": "日期",
+    "pair": "货币对",
+    "rate": "汇率",
+    "source": "数据源",
+    "updatedAt": "更新时间",
+    "rowsPerPage": "每页行数:",
+    "displayedRows": "{{from}}-{{to}} / 共 {{count}} 条"
+  },
+  "error": {
+    "loadFailed": "加载失败",
+    "cannotLoadChart": "无法加载图表数据",
+    "cannotLoadHistory": "无法加载历史数据",
+    "cannotGetRate": "无法获取汇率",
+    "retry": "重试"
+  },
+  "loading": {
+    "loading": "加载中...",
+    "loadingChart": "加载图表数据...",
+    "loadingHistory": "加载历史数据..."
+  },
+  "currency": {
+    "pair": "货币对",
+    "base": "基础货币",
+    "quote": "报价货币",
+    "swap": "交换货币"
+  },
+  "stats": {
+    "title": "30天统计",
+    "change24h": "30天变化",
+    "high": "最高",
+    "low": "最低",
+    "average": "平均"
+  },
+  "converter": {
+    "title": "货币转换器",
+    "amount": "金额",
+    "result": "结果"
+  },
+  "footer": {
+    "madeWith": "用",
+    "by": "制作",
+    "openSource": "开源项目"
+  }
+}
