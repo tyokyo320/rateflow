@@ -1,0 +1,46 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# 文档
+*.md
+!README.md
+docs/
+LICENSE
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# 构建产物
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+rateflow-api
+rateflow-worker
+/tmp/
+*.log
+
+# 测试
+*.test
+*.out
+coverage.out
+coverage.html
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# 其他
+.DS_Store
+.env
+.env.local
+_old_union_pay/
+vendor/

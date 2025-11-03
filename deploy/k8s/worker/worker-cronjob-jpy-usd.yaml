@@ -1,0 +1,57 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: rateflow-fetch-jpy-usd
+  namespace: rateflow
+  labels:
+    app: rateflow-worker
+    component: worker
+    currency-pair: JPY-USD
+spec:
+  schedule: "5 * * * *"  # Run every hour at 5 minutes past the hour (offset from CNY/JPY)
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    metadata:
+      labels:
+        app: rateflow-worker
+        component: worker
+        currency-pair: JPY-USD
+    spec:
+      backoffLimit: 3
+      template:
+        metadata:
+          labels:
+            app: rateflow-worker
+            component: worker
+            currency-pair: JPY-USD
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: worker
+            image: tyokyo320/rateflow-worker:latest
+            imagePullPolicy: Always
+            args: ["fetch", "--pair", "JPY/USD"]
+            envFrom:
+            - configMapRef:
+                name: rateflow-config
+            env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rateflow-secret
+                  key: DB_PASSWORD
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rateflow-secret
+                  key: REDIS_PASSWORD
+            resources:
+              requests:
+                memory: "64Mi"
+                cpu: "100m"
+              limits:
+                memory: "128Mi"
+                cpu: "200m"

@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rateflow-api
+  namespace: rateflow
+  labels:
+    app: rateflow-api
+    component: api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rateflow-api
+  template:
+    metadata:
+      labels:
+        app: rateflow-api
+        component: api
+    spec:
+      containers:
+      - name: api
+        image: tyokyo320/rateflow-api:latest  # Change to your image
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: rateflow-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: rateflow-config
+              key: DB_PORT
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: rateflow-config
+              key: DB_USER
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: rateflow-config
+              key: DB_NAME
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rateflow-secret
+              key: DB_PASSWORD
+        - name: DB_SSLMODE
+          valueFrom:
+            configMapKeyRef:
+              name: rateflow-config
+              key: DB_SSLMODE
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: rateflow-config
+              key: REDIS_HOST
+        - name: REDIS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: rateflow-config
+              key: REDIS_PORT
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: rateflow-config
+              key: LOG_LEVEL
+        - name: LOG_FORMAT
+          valueFrom:
+            configMapKeyRef:
+              name: rateflow-config
+              key: LOG_FORMAT
+        - name: SERVER_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: rateflow-config
+              key: SERVER_HOST
+        - name: SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: rateflow-config
+              key: SERVER_PORT
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rateflow-ingress
+  namespace: rateflow
+  annotations:
+    # Modify annotations according to your Ingress Controller
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx  # Change according to your Ingress Controller
+  rules:
+  - host: rate.example.com  # Change to your domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: rateflow-api
+            port:
+              number: 8080
+  # TLS configuration (optional)
+  # tls:
+  # - hosts:
+  #   - rate.example.com
+  #   secretName: rateflow-tls

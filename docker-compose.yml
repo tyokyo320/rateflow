@@ -1,55 +1,88 @@
-version: "3"
 services:
+  # PostgreSQL database
   postgres:
-    image: postgres:13
-    container_name: rate-postgres
-    restart: always
+    image: postgres:17-alpine
+    container_name: rateflow-postgres
     environment:
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
-      POSTGRES_DB: test
-    ports:
-      - 5432:5432
-    # volumes:
-    #   - ~/docker/union-pay/postgresql/data:/var/lib/postgresql/data
-    networks:
-      - default
-      - nginx-proxy
-
-  redis:
-    image: redis:latest
-    container_name: rate-redis
-    hostname: redis
-    restart: always
-    ports:
-      - 6379:6379
-    networks:
-      - default
-      - nginx-proxy
-    # volumes:
-    #   - ~/docker/union-pay/redis/data:/data
-    #   - ~/docker/union-pay/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
-    #   - ~/docker/union-pay/redis/logs:/logs
-
-  rate:
-    build: ~/docker/union-pay/
-    container_name: rate
-    environment:
-      - TZ=Asia/Tokyo
-      - VIRTUAL_HOST=rate.tyokyo320.com
-      - GIN_MODE=release
+      POSTGRES_DB: rateflow
+      POSTGRES_USER: rateflow
+      POSTGRES_PASSWORD: rateflow_password
+      POSTGRES_INITDB_ARGS: "-E UTF8"
+    # ports:
+    #   - "5433:5432"  # Not exposed to host, internal access only
     volumes:
-      - ~/docker/union-pay/config.yml:/root/config.yml
-      - ~/docker/union-pay/logs:/root/logs
-    restart: unless-stopped
-    depends_on:
-      - redis
-      - postgres
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rateflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
-      - default
-      - nginx-proxy
+      - rateflow-network
+
+  # Redis cache
+  redis:
+    image: redis:8-alpine
+    container_name: rateflow-redis
+    # ports:
+    #   - "6380:6379"  # Not exposed to host, internal access only
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - rateflow-network
+
+  # API service
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rateflow-api:latest
+    container_name: rateflow-api
+    ports:
+      - "8080:8080"
+    environment:
+      SERVER_HOST: "0.0.0.0"
+      SERVER_PORT: "8080"
+      ENVIRONMENT: "development"
+      DB_HOST: "postgres"
+      DB_PORT: "5432"
+      DB_USER: "rateflow"
+      DB_PASSWORD: "rateflow_password"
+      DB_NAME: "rateflow"
+      DB_SSLMODE: "disable"
+      # Redis configuration (use service name)
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+      REDIS_DB: "0"
+      LOG_LEVEL: "info"
+      LOG_FORMAT: "json"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "-O", "/dev/null", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - rateflow-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
 
 networks:
-  nginx-proxy:
-    external:
-      name: nginx-proxy
+  rateflow-network:
+    driver: bridge

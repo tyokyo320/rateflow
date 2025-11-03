@@ -1,23 +1,91 @@
-name: ci-test
+name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [master, main, develop]
   pull_request:
-    branches: [main]
+    branches: [master, main, develop]
 
 jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: rateflow
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: rateflow_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:8-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    
     steps:
-      - name: Set up Go 1.x
-        uses: actions/setup-go@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          go-version: ^1.24
+          go-version: '1.25'
+          cache: true
+      
+      - name: Install dependencies
+        run: go mod download
+      
+      - name: Run go vet
+        run: go vet ./...
+      
+      - name: Run tests
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: rateflow
+          DB_PASSWORD: test_password
+          DB_NAME: rateflow_test
+          DB_SSLMODE: disable
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          LOG_LEVEL: error
+        run: go test -v -race -cover ./...
+      
+      - name: Build API
+        run: go build -v ./cmd/api
+      
+      - name: Build Worker
+        run: go build -v ./cmd/worker
 
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-
-      - name: Build
-        run: go build cmd/server/main.go
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+          cache: true
+      
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: latest
+          args: --timeout=5m

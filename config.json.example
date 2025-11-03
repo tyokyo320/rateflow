@@ -1,0 +1,29 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8080,
+    "readTimeout": "30s",
+    "writeTimeout": "30s",
+    "environment": "dev"
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "user": "rateflow",
+    "password": "rateflow_password",
+    "database": "rateflow",
+    "sslMode": "disable",
+    "timezone": "Asia/Tokyo",
+    "maxConns": 25
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "password": "",
+    "db": 0
+  },
+  "logger": {
+    "level": "info",
+    "format": "json"
+  }
+}

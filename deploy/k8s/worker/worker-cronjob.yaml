@@ -1,0 +1,80 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: rateflow-fetch-cny-jpy
+  namespace: rateflow
+  labels:
+    app: rateflow-worker
+    component: worker
+    currency-pair: CNY-JPY
+spec:
+  # Run every hour
+  schedule: "0 * * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: rateflow-worker
+            component: worker
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: worker
+            image: tyokyo320/rateflow-worker:latest  # Change to your image
+            args: ["fetch", "--pair", "CNY/JPY"]
+            env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: rateflow-config
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: rateflow-config
+                  key: DB_PORT
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: rateflow-config
+                  key: DB_USER
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: rateflow-config
+                  key: DB_NAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rateflow-secret
+                  key: DB_PASSWORD
+            - name: DB_SSLMODE
+              valueFrom:
+                configMapKeyRef:
+                  name: rateflow-config
+                  key: DB_SSLMODE
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: rateflow-config
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: rateflow-config
+                  key: REDIS_PORT
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: rateflow-config
+                  key: LOG_LEVEL
+            resources:
+              requests:
+                memory: "64Mi"
+                cpu: "50m"
+              limits:
+                memory: "128Mi"
+                cpu: "100m"
