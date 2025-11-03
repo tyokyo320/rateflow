@@ -6,15 +6,15 @@ info:
     name: API Support
     url: https://github.com/tyokyo320/rateflow
   description: |-
-    Exchange rate tracking service for UnionPay CNY/JPY rates
+    Multi-currency exchange rate tracking service powered by UnionPay
 
     This API provides access to historical and current exchange rates
-    between Chinese Yuan (CNY) and Japanese Yen (JPY) from UnionPay.
+    for 1,920+ currency pairs from UnionPay (12 base × 160+ target currencies).
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
   title: RateFlow API
-  version: 1.1.6
+  version: 1.2.0
 paths:
   /api/rates:
     get:

@@ -48,15 +48,6 @@ func (c *Client) Name() string {
 
 // FetchRate fetches the exchange rate for a specific currency pair and date.
 func (c *Client) FetchRate(ctx context.Context, pair currency.Pair, date time.Time) (float64, error) {
-	// UnionPay only supports CNY/JPY
-	if !c.supportsPair(pair) {
-		return 0, provider.NewProviderError(
-			c.Name(),
-			fmt.Sprintf("unsupported currency pair: %s", pair.String()),
-			nil,
-		)
-	}
-
 	// Build URL with date
 	dateStr := timeutil.FormatCompactDate(date)
 	url := fmt.Sprintf("%s/%s.json", baseURL, dateStr)
@@ -89,9 +80,14 @@ func (c *Client) FetchRate(ctx context.Context, pair currency.Pair, date time.Ti
 		)
 	}
 
-	// Find the rate for JPY/CNY
+	// Get base and quote currency codes
+	baseCur := string(pair.Base())
+	quoteCur := string(pair.Quote())
+
+	// Find the rate in response
+	// UnionPay format: transCur (quote) / baseCur (base)
 	for _, item := range resp.ExchangeRateJSON {
-		if item.TransCur == "JPY" && item.BaseCur == "CNY" {
+		if item.TransCur == quoteCur && item.BaseCur == baseCur {
 			c.logger.Info("rate fetched successfully",
 				"pair", pair.String(),
 				"rate", item.RateData,
@@ -101,7 +97,7 @@ func (c *Client) FetchRate(ctx context.Context, pair currency.Pair, date time.Ti
 		}
 	}
 
-	// Rate not found (weekends/holidays)
+	// Rate not found (weekends/holidays or unsupported pair)
 	c.logger.Warn("rate not found in response",
 		"pair", pair.String(),
 		"date", dateStr,
@@ -109,7 +105,7 @@ func (c *Client) FetchRate(ctx context.Context, pair currency.Pair, date time.Ti
 
 	return 0, provider.NewProviderError(
 		c.Name(),
-		"rate not found in response (possibly weekend/holiday)",
+		fmt.Sprintf("rate not found for %s (possibly weekend/holiday or unsupported pair)", pair.String()),
 		nil,
 	)
 }
@@ -120,9 +116,33 @@ func (c *Client) FetchLatest(ctx context.Context, pair currency.Pair) (float64, 
 }
 
 // SupportedPairs returns the list of supported currency pairs.
+// UnionPay supports 12 base currencies and 160+ target currencies.
+// We return the most commonly used pairs here.
 func (c *Client) SupportedPairs() []currency.Pair {
+	// List of major supported pairs
+	// UnionPay actually supports many more (12 base × 160+ target currencies)
 	return []currency.Pair{
+		// CNY pairs
 		currency.MustNewPair(currency.CNY, currency.JPY),
+		currency.MustNewPair(currency.CNY, currency.USD),
+		currency.MustNewPair(currency.CNY, currency.EUR),
+		currency.MustNewPair(currency.CNY, currency.GBP),
+		currency.MustNewPair(currency.CNY, currency.HKD),
+
+		// JPY pairs
+		currency.MustNewPair(currency.JPY, currency.USD),
+		currency.MustNewPair(currency.JPY, currency.EUR),
+		currency.MustNewPair(currency.JPY, currency.CNY),
+
+		// USD pairs
+		currency.MustNewPair(currency.USD, currency.JPY),
+		currency.MustNewPair(currency.USD, currency.EUR),
+		currency.MustNewPair(currency.USD, currency.CNY),
+
+		// Other major pairs
+		currency.MustNewPair(currency.EUR, currency.USD),
+		currency.MustNewPair(currency.EUR, currency.JPY),
+		currency.MustNewPair(currency.GBP, currency.USD),
 	}
 }
 
@@ -138,15 +158,4 @@ func (c *Client) FetchMulti(ctx context.Context, pairs []currency.Pair, date tim
 		"batch fetch not supported",
 		nil,
 	)
-}
-
-// supportsPair checks if the provider supports the given currency pair.
-func (c *Client) supportsPair(pair currency.Pair) bool {
-	supported := c.SupportedPairs()
-	for _, p := range supported {
-		if p.Equal(pair) {
-			return true
-		}
-	}
-	return false
 }

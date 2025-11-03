@@ -5,7 +5,7 @@
     ],
     "swagger": "2.0",
     "info": {
-        "description": "Exchange rate tracking service for UnionPay CNY/JPY rates\n\nThis API provides access to historical and current exchange rates\nbetween Chinese Yuan (CNY) and Japanese Yen (JPY) from UnionPay.",
+        "description": "Multi-currency exchange rate tracking service powered by UnionPay\n\nThis API provides access to historical and current exchange rates\nfor 1,920+ currency pairs from UnionPay (12 base × 160+ target currencies).",
         "title": "RateFlow API",
         "contact": {
             "name": "API Support",
@@ -16,7 +16,7 @@
             "name": "MIT",
             "url": "https://opensource.org/licenses/MIT"
         },
-        "version": "1.1.6"
+        "version": "1.2.0"
     },
     "host": "localhost:8080",
     "basePath": "/",

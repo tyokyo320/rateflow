@@ -23,15 +23,15 @@ import (
 
 const (
 	serviceName    = "rateflow-api"
-	serviceVersion = "1.1.6"
+	serviceVersion = "1.2.0"
 )
 
 // @title RateFlow API
-// @version 1.1.6
-// @description Exchange rate tracking service for UnionPay CNY/JPY rates
+// @version 1.2.0
+// @description Multi-currency exchange rate tracking service powered by UnionPay
 // @description
 // @description This API provides access to historical and current exchange rates
-// @description between Chinese Yuan (CNY) and Japanese Yen (JPY) from UnionPay.
+// @description for 1,920+ currency pairs from UnionPay (12 base × 160+ target currencies).
 //
 // @contact.name API Support
 // @contact.url https://github.com/tyokyo320/rateflow

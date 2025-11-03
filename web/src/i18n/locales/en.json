@@ -23,7 +23,7 @@
     "custom": "Custom",
     "customRange": "Custom Date Range",
     "numberOfDays": "Number of Days",
-    "maxDays": "Max 365 days",
+    "enterDays": "Enter number of days",
     "apply": "Apply",
     "cancel": "Cancel"
   },
