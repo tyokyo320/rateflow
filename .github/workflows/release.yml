@@ -89,6 +89,26 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Build and push Web Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./web
+          file: ./web/Dockerfile
+          push: true
+          tags: |
+            tyokyo320/rateflow-web:${{ steps.version.outputs.VERSION }}
+            tyokyo320/rateflow-web:latest
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
       - name: Generate changelog
         id: changelog
         run: |
@@ -117,6 +137,7 @@ jobs:
 
             - **API**: `tyokyo320/rateflow-api:${{ steps.version.outputs.VERSION }}`
             - **Worker**: `tyokyo320/rateflow-worker:${{ steps.version.outputs.VERSION }}`
+            - **Web**: `tyokyo320/rateflow-web:${{ steps.version.outputs.VERSION }}`
 
             ## Installation
 
@@ -124,11 +145,12 @@ jobs:
             ```bash
             docker pull tyokyo320/rateflow-api:${{ steps.version.outputs.VERSION }}
             docker pull tyokyo320/rateflow-worker:${{ steps.version.outputs.VERSION }}
+            docker pull tyokyo320/rateflow-web:${{ steps.version.outputs.VERSION }}
             ```
 
             ### Using Kubernetes
             ```bash
-            # Update image tags in deploy/k8s/api/kustomization.yaml and deploy/k8s/worker/kustomization.yaml
+            # Update image tags in deploy/k8s/*/kustomization.yaml
             kubectl apply -k deploy/k8s
             ```
 
