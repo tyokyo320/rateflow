@@ -56,25 +56,6 @@ steps:
       - master
       - develop
 
-- name: ssh-commands
-  image: appleboy/drone-ssh
-  settings:
-    host:
-      from_secret: ssh_host
-    username:
-      from_secret: ssh_username
-    key:
-      from_secret: id_rsa
-    port: 22
-    script:
-      - |
-        if [ -d "docker/rateflow" ]; then
-          cd docker/rateflow && git pull
-        else
-          git clone git@gitea.tyokyo320.com:tyokyo320/rateflow.git docker/rateflow
-        fi
-      - docker-compose -f docker/rateflow/docker-compose.yml up -d --build
-
 - name: send-telegram-notification-end
   image: appleboy/drone-telegram
   when:
