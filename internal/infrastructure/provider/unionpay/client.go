@@ -99,15 +99,41 @@ func (c *Client) FetchRate(ctx context.Context, pair currency.Pair, date time.Ti
 	quoteCur := string(pair.Quote())
 
 	// Find the rate in response
-	// UnionPay format: transCur (quote) / baseCur (base)
+	// UnionPay format: rateData = (baseCur amount) per (1 unit of transCur)
+	// Example: {"transCur": "USD", "baseCur": "JPY", "rateData": 154.79}
+	// means: 1 USD = 154.79 JPY  (or: 154.79 JPY per 1 USD)
+	//
+	// We want pair.Base()/pair.Quote() rate, e.g., CNY/JPY means "1 CNY = X JPY"
+	//
+	// Strategy: Try two cases
+	// Case 1: If we find transCur=BASE, baseCur=QUOTE
+	//         This gives us: rateData = (quote amount) per (1 base)
+	//         Which is exactly what we want!
+	// Case 2: If we find transCur=QUOTE, baseCur=BASE
+	//         This gives us: rateData = (base amount) per (1 quote)
+	//         We need to invert: 1/rateData
+
 	for _, item := range resp.ExchangeRateJSON {
-		if item.TransCur == quoteCur && item.BaseCur == baseCur {
+		if item.TransCur == baseCur && item.BaseCur == quoteCur {
+			// Case 1: Direct match
 			c.logger.Info("rate fetched successfully",
 				"pair", pair.String(),
 				"rate", item.RateData,
+				"unionpay_format", fmt.Sprintf("%.8f %s per 1 %s", item.RateData, item.BaseCur, item.TransCur),
 				"date", dateStr,
 			)
 			return item.RateData, nil
+		}
+		if item.TransCur == quoteCur && item.BaseCur == baseCur {
+			// Case 2: Inverted match - need to take reciprocal
+			rate := 1.0 / item.RateData
+			c.logger.Info("rate fetched successfully (inverted)",
+				"pair", pair.String(),
+				"rate", rate,
+				"unionpay_format", fmt.Sprintf("%.8f %s per 1 %s", item.RateData, item.BaseCur, item.TransCur),
+				"date", dateStr,
+			)
+			return rate, nil
 		}
 	}
 
