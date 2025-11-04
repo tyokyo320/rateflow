@@ -6,9 +6,15 @@ import {
   ToggleButton,
   Button,
   Popover,
-  TextField,
+  Stack,
 } from '@mui/material'
 import DateRangeIcon from '@mui/icons-material/DateRange'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs, { Dayjs } from 'dayjs'
+import 'dayjs/locale/zh-cn'
+import 'dayjs/locale/en'
 import {
   LineChart,
   Line,
@@ -35,10 +41,11 @@ interface RateChartProps {
 const dayOptions = [7, 14, 30, 60, 90]
 
 function RateChart({ pair, days, onDaysChange }: RateChartProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { isInverted, apiPair } = parseCurrencyPair(pair)
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
-  const [customDays, setCustomDays] = useState<string>('')
+  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs().subtract(days, 'day'))
+  const [endDate, setEndDate] = useState<Dayjs | null>(dayjs())
 
   // pageSize parameter controls how many records to fetch
   const { data, isLoading, error, refetch } = useHistoricalRates(apiPair, 1, days + 1)
@@ -46,14 +53,17 @@ function RateChart({ pair, days, onDaysChange }: RateChartProps) {
   const chartData = useMemo<ChartDataPoint[]>(() => {
     if (!data?.items) return []
 
+    // For long date ranges (> 90 days), show year in date label
+    const dateFormat = days > 90 ? 'YY-MM-DD' : 'MM-DD'
+
     return data.items
       .map((rate) => ({
-        date: formatDate(rate.effectiveDate, 'MM-DD'),
+        date: formatDate(rate.effectiveDate, dateFormat),
         rate: isInverted ? 1 / rate.rate : rate.rate,
         fullDate: rate.effectiveDate,
       }))
       .reverse() // Show oldest to newest
-  }, [data, isInverted])
+  }, [data, isInverted, days])
 
   // Calculate Y-axis domain with appropriate scale based on rate range
   const yAxisConfig = useMemo(() => {
@@ -113,7 +123,10 @@ function RateChart({ pair, days, onDaysChange }: RateChartProps) {
     if (length <= 14) return 1 // Show every other for 14 days
     if (length <= 30) return Math.floor(length / 7) // Show ~7 ticks for 30 days
     if (length <= 60) return Math.floor(length / 8) // Show ~8 ticks for 60 days
-    return Math.floor(length / 10) // Show ~10 ticks for 90 days
+    if (length <= 90) return Math.floor(length / 10) // Show ~10 ticks for 90 days
+    if (length <= 180) return Math.floor(length / 12) // Show ~12 ticks for 180 days
+    if (length <= 365) return Math.floor(length / 12) // Show ~12 ticks for 1 year
+    return Math.floor(length / 15) // Show ~15 ticks for longer ranges
   }, [chartData.length])
 
   // Determine dot display based on data density
@@ -133,14 +146,16 @@ function RateChart({ pair, days, onDaysChange }: RateChartProps) {
 
   const handleCustomRangeClose = () => {
     setAnchorEl(null)
-    setCustomDays('')
+    // Reset to current days range
+    setStartDate(dayjs().subtract(days, 'day'))
+    setEndDate(dayjs())
   }
 
-  const handleCustomDaysApply = () => {
-    const numDays = parseInt(customDays, 10)
-    if (numDays > 0) {
+  const handleDateRangeApply = () => {
+    if (startDate && endDate && startDate.isBefore(endDate)) {
+      const numDays = endDate.diff(startDate, 'day')
       onDaysChange(numDays)
-      handleCustomRangeClose()
+      setAnchorEl(null)
     }
   }
 
@@ -197,32 +212,41 @@ function RateChart({ pair, days, onDaysChange }: RateChartProps) {
               horizontal: 'right',
             }}
           >
-            <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2, minWidth: 200 }}>
-              <Typography variant="subtitle2">{t('chart.customRange')}</Typography>
-              <TextField
-                label={t('chart.numberOfDays')}
-                type="number"
-                size="small"
-                value={customDays}
-                onChange={(e) => setCustomDays(e.target.value)}
-                inputProps={{ min: 1 }}
-                helperText={t('chart.enterDays')}
-                autoFocus
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleCustomDaysApply()
-                  }
-                }}
-              />
-              <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                <Button size="small" onClick={handleCustomRangeClose}>
-                  {t('chart.cancel')}
-                </Button>
-                <Button size="small" variant="contained" onClick={handleCustomDaysApply}>
-                  {t('chart.apply')}
-                </Button>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={i18n.language === 'zh' ? 'zh-cn' : 'en'}>
+              <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2, minWidth: 300 }}>
+                <Typography variant="subtitle2">{t('chart.customRange')}</Typography>
+                <Stack spacing={2}>
+                  <DatePicker
+                    label={t('chart.startDate')}
+                    value={startDate}
+                    onChange={(newValue) => setStartDate(newValue)}
+                    maxDate={endDate || dayjs()}
+                    slotProps={{ textField: { size: 'small' } }}
+                  />
+                  <DatePicker
+                    label={t('chart.endDate')}
+                    value={endDate}
+                    onChange={(newValue) => setEndDate(newValue)}
+                    minDate={startDate || undefined}
+                    maxDate={dayjs()}
+                    slotProps={{ textField: { size: 'small' } }}
+                  />
+                </Stack>
+                <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                  <Button size="small" onClick={handleCustomRangeClose}>
+                    {t('chart.cancel')}
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    onClick={handleDateRangeApply}
+                    disabled={!startDate || !endDate || !startDate.isBefore(endDate)}
+                  >
+                    {t('chart.apply')}
+                  </Button>
+                </Box>
               </Box>
-            </Box>
+            </LocalizationProvider>
           </Popover>
         </Box>
       </Box>

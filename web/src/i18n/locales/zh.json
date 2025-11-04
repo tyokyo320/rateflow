@@ -22,8 +22,8 @@
     "rate": "汇率",
     "custom": "自定义",
     "customRange": "自定义日期范围",
-    "numberOfDays": "天数",
-    "enterDays": "输入天数",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
     "apply": "应用",
     "cancel": "取消"
   },

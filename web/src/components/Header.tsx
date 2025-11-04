@@ -10,7 +10,7 @@ import { useThemeMode } from '../contexts/ThemeContext'
 
 function Header() {
   const { t, i18n } = useTranslation()
-  const { data: health } = useHealthCheck()
+  const { isError } = useHealthCheck()
   const { mode, toggleTheme } = useThemeMode()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
@@ -76,11 +76,11 @@ function Header() {
           </MenuItem>
         </Menu>
 
-        {/* Health Status */}
-        {health && (
+        {/* Health Status - Only show if there's an error */}
+        {isError && (
           <Chip
-            label={health.status === 'ok' ? t('app.online') : t('app.offline')}
-            color={health.status === 'ok' ? 'success' : 'error'}
+            label={t('app.offline')}
+            color="error"
             size="small"
           />
         )}

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/tyokyo320/rateflow/internal/domain/currency"
@@ -63,6 +64,19 @@ func (c *Client) FetchRate(ctx context.Context, pair currency.Pair, date time.Ti
 		"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
 	})
 	if err != nil {
+		// Check if it's a 404 error which might indicate historical data not available
+		if strings.Contains(err.Error(), "404") {
+			c.logger.Warn("UnionPay API returned 404 - historical data may not be available for this date",
+				"pair", pair.String(),
+				"date", dateStr,
+				"url", url,
+			)
+			return 0, provider.NewProviderError(
+				c.Name(),
+				fmt.Sprintf("data not available for %s (404 - possibly too old or API unavailable)", dateStr),
+				err,
+			)
+		}
 		return 0, provider.NewProviderError(
 			c.Name(),
 			"failed to fetch data",
