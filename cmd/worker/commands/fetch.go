@@ -76,7 +76,7 @@ func runFetch(cmd *cobra.Command, args []string) error {
 		cfg.Logger.Level = "debug"
 	}
 	log := logger.New(cfg.Logger)
-	log = logger.WithContext(log, "rateflow-worker", "1.2.1")
+	log = logger.WithContext(log, "rateflow-worker", "1.3.0")
 
 	log.Info("starting fetch command",
 		slog.String("pair", fetchPair),
