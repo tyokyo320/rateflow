@@ -22,8 +22,8 @@
     "rate": "Rate",
     "custom": "Custom",
     "customRange": "Custom Date Range",
-    "numberOfDays": "Number of Days",
-    "enterDays": "Enter number of days",
+    "startDate": "Start Date",
+    "endDate": "End Date",
     "apply": "Apply",
     "cancel": "Cancel"
   },
