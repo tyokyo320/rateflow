@@ -8,7 +8,7 @@ Rateflow is a modern Go 1.25+ exchange rate tracking platform built with Domain-
 
 **Key Technologies**: Go 1.25+, Gin, GORM, Redis, PostgreSQL, Cobra CLI, Swagger, React 18
 
-**Website**: https://rate.tyokyo320.com
+**Website**: https://rateflow.tyokyo320.com
 
 ## Architecture
 

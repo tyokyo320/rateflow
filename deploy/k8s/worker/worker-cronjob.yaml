@@ -23,7 +23,8 @@ spec:
           restartPolicy: OnFailure
           containers:
           - name: worker
-            image: tyokyo320/rateflow-worker:latest  # Change to your image
+            image: tyokyo320/rateflow-api:latest  # Now uses rateflow-api image which includes worker
+            command: ["/app/rateflow-worker"]
             args: ["fetch", "--pair", "CNY/JPY"]
             env:
             - name: DB_HOST

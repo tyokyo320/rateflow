@@ -2,7 +2,9 @@
 
 # Kubernetes Deployment Guide
 
-This directory contains Kubernetes deployment configurations for RateFlow, managed with Kustomize.
+**🔄 Upgrading from v1.3.1?** See [Upgrade Guide](./UPGRADE.md) | [升级指南](./UPGRADE.zh-CN.md)
+
+This directory contains Kubernetes deployment configurations for RateFlow v1.4.0, managed with Kustomize.
 
 ## Directory Structure
 

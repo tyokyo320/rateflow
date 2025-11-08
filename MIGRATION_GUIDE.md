@@ -1,8 +1,10 @@
-# Migration Guide for v1.3.1
+# Migration Guide for v1.4.0
+
+**English** | [简体中文](./docs/MIGRATION.zh-CN.md)
 
 ## Critical: Fix for Incorrect Exchange Rate Data
 
-Version 1.3.1 fixes a **critical bug** in how UnionPay API responses were interpreted. **All existing data in your database may be incorrect** and needs to be re-fetched.
+Version 1.4.0 fixes a **critical bug** in how UnionPay API responses were interpreted. **All existing data in your database may be incorrect** and needs to be re-fetched.
 
 ### What Was Wrong?
 

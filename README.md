@@ -1,17 +1,20 @@
 # RateFlow
 
-[English](#english) | [中文](#中文)
-
----
-
-## English
-
+[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat&logo=go)](https://go.dev/)
+[![React](https://img.shields.io/badge/React-18+-61DAFB?style=flat&logo=react)](https://react.dev/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/Version-1.4.0-blue.svg)](https://github.com/tyokyo320/rateflow/releases)
 
 > A modern, scalable multi-currency exchange rate tracking platform built with Go 1.25+ and React 18+
 
-[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat&logo=go)](https://go.dev/)
-[![React](https://img.shields.io/badge/React-18+-61DAFB?style=flat&logo=react)](https://react.dev/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+**English** | [简体中文](./docs/README.zh-CN.md)
+
+**📖 Documentation**: [English README](./README.md) | [中文文档](./docs/README.zh-CN.md)
+**🔄 Migration Guide**: [English](./MIGRATION_GUIDE.md) | [中文迁移指南](./docs/MIGRATION.zh-CN.md)
+
+**Official Website**: https://rateflow.tyokyo320.com
+
+---
 
 
 ---
@@ -732,7 +735,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📧 Contact
 
 - **Author**: tyokyo320
-- **Website**: https://rate.tyokyo320.com
+- **Website**: https://rateflow.tyokyo320.com
 - **GitHub**: [@tyokyo320](https://github.com/tyokyo320)
 
 ---
@@ -1180,7 +1183,7 @@ make docker-up
 ## 📧 联系方式
 
 - **作者**: tyokyo320
-- **网站**: https://rate.tyokyo320.com
+- **网站**: https://rateflow.tyokyo320.com
 - **GitHub**: [@tyokyo320](https://github.com/tyokyo320)
 
 ---

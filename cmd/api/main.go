@@ -23,11 +23,11 @@ import (
 
 const (
 	serviceName    = "rateflow-api"
-	serviceVersion = "1.3.1"
+	serviceVersion = "1.4.0"
 )
 
 // @title RateFlow API
-// @version 1.3.1
+// @version 1.4.0
 // @description Multi-currency exchange rate tracking service powered by UnionPay
 // @description
 // @description This API provides access to historical and current exchange rates

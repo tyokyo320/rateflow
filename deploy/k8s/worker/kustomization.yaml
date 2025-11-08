@@ -4,9 +4,13 @@ kind: Kustomization
 namespace: rateflow
 
 resources:
-  - worker-cronjob.yaml
-  - worker-cronjob-jpy-usd.yaml
+  # Recommended: Use fetch-matrix for batch fetching all currency pairs
+  - worker-cronjob-matrix.yaml
+
+  # Legacy: Individual currency pair jobs (kept for reference)
+  # - worker-cronjob.yaml
+  # - worker-cronjob-jpy-usd.yaml
 
 images:
-  - name: tyokyo320/rateflow-worker
-    newTag: v1.0.0  # Change this to your desired image tag
+  - name: tyokyo320/rateflow-api
+    newTag: v1.4.0  # Updated to v1.4.0, now includes worker binary

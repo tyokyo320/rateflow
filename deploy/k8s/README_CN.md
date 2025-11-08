@@ -2,7 +2,9 @@
 
 # Kubernetes 部署指南
 
-本目录包含 RateFlow 的 Kubernetes 部署配置，使用 Kustomize 进行管理。
+**🔄 从 v1.3.1 升级?** 查看 [升级指南](./UPGRADE.zh-CN.md) | [Upgrade Guide](./UPGRADE.md)
+
+本目录包含 RateFlow v1.4.0 的 Kubernetes 部署配置，使用 Kustomize 进行管理。
 
 ## 目录结构
 
