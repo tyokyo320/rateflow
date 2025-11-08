@@ -10,13 +10,13 @@
         "contact": {
             "name": "API Support",
             "url": "https://github.com/tyokyo320/rateflow",
-            "email": "support@example.com"
+            "email": "contact@tyokyo320.com"
         },
         "license": {
             "name": "MIT",
             "url": "https://opensource.org/licenses/MIT"
         },
-        "version": "1.4.0"
+        "version": "1.5.0"
     },
     "host": "localhost:8080",
     "basePath": "/",

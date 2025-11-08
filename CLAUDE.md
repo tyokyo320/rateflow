@@ -98,6 +98,9 @@ make quickstart
 make dev                    # Start PostgreSQL + Redis
 make run                    # Run API server
 
+# Full stack development (database + backend + frontend)
+make fullstack              # Start all services for local development
+
 # Testing
 make test                   # Run all tests
 make test-cover             # Generate coverage report

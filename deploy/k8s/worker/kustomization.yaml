@@ -13,4 +13,4 @@ resources:
 
 images:
   - name: tyokyo320/rateflow-api
-    newTag: v1.4.0  # Updated to v1.4.0, now includes worker binary
+    newTag: v1.5.0  # Updated to v1.4.0, now includes worker binary

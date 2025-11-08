@@ -23,11 +23,11 @@ import (
 
 const (
 	serviceName    = "rateflow-api"
-	serviceVersion = "1.4.0"
+	serviceVersion = "1.5.0"
 )
 
 // @title RateFlow API
-// @version 1.4.0
+// @version 1.5.0
 // @description Multi-currency exchange rate tracking service powered by UnionPay
 // @description
 // @description This API provides access to historical and current exchange rates
@@ -35,7 +35,7 @@ const (
 //
 // @contact.name API Support
 // @contact.url https://github.com/tyokyo320/rateflow
-// @contact.email support@example.com
+// @contact.email contact@tyokyo320.com
 //
 // @license.name MIT
 // @license.url https://opensource.org/licenses/MIT

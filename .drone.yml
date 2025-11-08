@@ -28,7 +28,14 @@ steps:
     password:
       from_secret: harbor_password
     dockerfile: Dockerfile
-    auto_tag: true
+    tags:
+      - latest
+      - ${DRONE_TAG##v}
+      - ${DRONE_TAG##v%.*}
+      - ${DRONE_TAG##v%.*.*}
+  when:
+    event:
+      - tag
 
 - name: build-and-push-worker
   image: plugins/docker
@@ -40,7 +47,14 @@ steps:
     password:
       from_secret: harbor_password
     dockerfile: deploy/docker/worker.Dockerfile
-    auto_tag: true
+    tags:
+      - latest
+      - ${DRONE_TAG##v}
+      - ${DRONE_TAG##v%.*}
+      - ${DRONE_TAG##v%.*.*}
+  when:
+    event:
+      - tag
 
 - name: build-and-push-web
   image: plugins/docker
@@ -53,7 +67,14 @@ steps:
       from_secret: harbor_password
     dockerfile: web/Dockerfile
     context: web
-    auto_tag: true
+    tags:
+      - latest
+      - ${DRONE_TAG##v}
+      - ${DRONE_TAG##v%.*}
+      - ${DRONE_TAG##v%.*.*}
+  when:
+    event:
+      - tag
 
 - name: send-telegram-notification-end
   image: appleboy/drone-telegram
