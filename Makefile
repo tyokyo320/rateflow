@@ -52,12 +52,17 @@ docker-ps: ## 📊 View service status
 
 docker-clean: ## 🧹 Clean all data (⚠️ Deletes database data)
 	@echo "$(YELLOW)⚠️  This will delete all data!$(NC)"
-	@read -p "Continue? (y/N) " -n 1 -r; \
-	echo; \
-	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		docker-compose down -v; \
-		echo "$(GREEN)✓ Cleanup complete$(NC)"; \
-	fi
+	@printf "Continue? (y/N) "; \
+	read REPLY; \
+	case $$REPLY in \
+		[Yy]|[Yy][Ee][Ss]) \
+			docker-compose down -v; \
+			echo "$(GREEN)✓ Cleanup complete$(NC)"; \
+			;; \
+		*) \
+			echo "Cancelled."; \
+			;; \
+	esac
 
 # ==================== Local Development Commands ====================
 

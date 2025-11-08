@@ -100,7 +100,6 @@ func (h *ListRatesHandler) Handle(ctx context.Context, query ListRatesQuery) (*L
 				"inverse_count", inverseCount,
 			)
 			rates = inverseRates
-			err = inverseErr
 			needsInversion = true
 		} else if err != nil {
 			// If direct query failed and inverse also failed, return error
@@ -114,7 +113,6 @@ func (h *ListRatesHandler) Handle(ctx context.Context, query ListRatesQuery) (*L
 			}
 			// Direct failed but inverse succeeded
 			rates = inverseRates
-			err = inverseErr
 			needsInversion = true
 		}
 	}
