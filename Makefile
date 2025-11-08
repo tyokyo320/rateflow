@@ -52,17 +52,27 @@ docker-ps: ## 📊 View service status
 
 docker-clean: ## 🧹 Clean all data (⚠️ Deletes database data)
 	@echo "$(YELLOW)⚠️  This will delete all data!$(NC)"
-	@read -p "Continue? (y/N) " -n 1 -r; \
-	echo; \
-	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		docker-compose down -v; \
-		echo "$(GREEN)✓ Cleanup complete$(NC)"; \
-	fi
+	@printf "Continue? (y/N) "; \
+	read REPLY; \
+	case $$REPLY in \
+		[Yy]|[Yy][Ee][Ss]) \
+			docker-compose down -v; \
+			echo "$(GREEN)✓ Cleanup complete$(NC)"; \
+			;; \
+		*) \
+			echo "Cancelled."; \
+			;; \
+	esac
 
 # ==================== Local Development Commands ====================
 
 run: ## 🏃 Run API service (local development)
-	go run cmd/api/main.go
+	@if [ ! -f .env ]; then \
+		echo "$(YELLOW)⚠️  .env file not found, creating from .env.example...$(NC)"; \
+		cp .env.example .env; \
+	fi
+	@echo "$(CYAN)Loading environment from .env...$(NC)"
+	@export $$(cat .env | grep -v '^#' | xargs) && go run cmd/api/main.go
 
 dev: ## 💻 Start development environment (database only, run API locally)
 	@echo "$(CYAN)Starting database services...$(NC)"
@@ -232,6 +242,7 @@ check: fmt vet test ## ✅ Full check (format + static analysis + tests)
 
 dev-full: deps build test swagger web-install ## 🎓 Full development workflow
 	@echo "$(GREEN)✓ Development environment ready!$(NC)"
+
 
 # ==================== Fullstack Development ====================
 

@@ -8,8 +8,8 @@ services:
       POSTGRES_USER: rateflow
       POSTGRES_PASSWORD: rateflow_password
       POSTGRES_INITDB_ARGS: "-E UTF8"
-    # ports:
-    #   - "5433:5432"  # Not exposed to host, internal access only
+    ports:
+      - "5432:5432"  # Exposed for local development
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -24,8 +24,8 @@ services:
   redis:
     image: redis:8-alpine
     container_name: rateflow-redis
-    # ports:
-    #   - "6380:6379"  # Not exposed to host, internal access only
+    ports:
+      - "6379:6379"  # Exposed for local development
     volumes:
       - redis_data:/data
     healthcheck:

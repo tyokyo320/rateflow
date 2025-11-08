@@ -9,4 +9,4 @@ resources:
 
 images:
   - name: tyokyo320/rateflow-api
-    newTag: v1.0.0  # Change this to your desired image tag
+    newTag: v1.5.1  # Change this to your desired image tag

@@ -12,7 +12,7 @@ const docTemplate = `{
         "contact": {
             "name": "API Support",
             "url": "https://github.com/tyokyo320/rateflow",
-            "email": "support@example.com"
+            "email": "contact@tyokyo320.com"
         },
         "license": {
             "name": "MIT",
@@ -409,7 +409,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.4.0",
+	Version:          "1.5.1",
 	Host:             "localhost:8080",
 	BasePath:         "/",
 	Schemes:          []string{"http", "https"},

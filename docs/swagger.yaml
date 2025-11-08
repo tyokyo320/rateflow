@@ -2,7 +2,7 @@ basePath: /
 host: localhost:8080
 info:
   contact:
-    email: support@example.com
+    email: contact@tyokyo320.com
     name: API Support
     url: https://github.com/tyokyo320/rateflow
   description: |-
@@ -14,7 +14,7 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
   title: RateFlow API
-  version: 1.4.0
+  version: 1.5.1
 paths:
   /api/rates:
     get:
