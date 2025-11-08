@@ -22,11 +22,17 @@ COPY . .
 # Generate Swagger documentation
 RUN /go/bin/swag init -g cmd/api/main.go -o docs --parseDependency --parseInternal
 
-# Build the application
+# Build the API application
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo \
     -ldflags="-w -s" \
     -o rateflow-api \
     cmd/api/main.go
+
+# Build the worker application
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo \
+    -ldflags="-w -s" \
+    -o rateflow-worker \
+    cmd/worker/main.go
 
 # Stage 2: Runtime
 FROM alpine:latest
@@ -44,8 +50,9 @@ RUN addgroup -g 1000 app && \
 # Set working directory
 WORKDIR /app
 
-# Copy binary from builder stage
+# Copy binaries from builder stage
 COPY --from=builder /build/rateflow-api .
+COPY --from=builder /build/rateflow-worker .
 
 # Copy Swagger documentation
 COPY --from=builder /build/docs ./docs

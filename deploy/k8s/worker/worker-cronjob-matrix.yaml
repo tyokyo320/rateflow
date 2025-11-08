@@ -1,15 +1,17 @@
 ---
+# Recommended: Use fetch-matrix for efficient batch fetching
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: rateflow-fetch-jpy-usd
+  name: rateflow-fetch-matrix
   namespace: rateflow
   labels:
     app: rateflow-worker
     component: worker
-    currency-pair: JPY-USD
+    job-type: fetch-matrix
 spec:
-  schedule: "5 * * * *"  # Run every hour at 5 minutes past the hour (offset from CNY/JPY)
+  # Run every hour to fetch all currency pairs
+  schedule: "0 * * * *"
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 1
   concurrencyPolicy: Forbid
@@ -18,7 +20,7 @@ spec:
       labels:
         app: rateflow-worker
         component: worker
-        currency-pair: JPY-USD
+        job-type: fetch-matrix
     spec:
       backoffLimit: 3
       template:
@@ -26,15 +28,20 @@ spec:
           labels:
             app: rateflow-worker
             component: worker
-            currency-pair: JPY-USD
+            job-type: fetch-matrix
         spec:
           restartPolicy: OnFailure
           containers:
           - name: worker
-            image: tyokyo320/rateflow-api:latest  # Now uses rateflow-api image which includes worker
+            image: tyokyo320/rateflow-api:latest  # Uses rateflow-api image which includes worker
             imagePullPolicy: Always
             command: ["/app/rateflow-worker"]
-            args: ["fetch", "--pair", "JPY/USD"]
+            args:
+              - "fetch-matrix"
+              - "--currencies"
+              - "CNY,JPY,USD,EUR,GBP"  # Configure your currency list here
+              - "--provider"
+              - "unionpay"
             envFrom:
             - configMapRef:
                 name: rateflow-config
@@ -49,10 +56,11 @@ spec:
                 secretKeyRef:
                   name: rateflow-secret
                   key: REDIS_PASSWORD
+                  optional: true
             resources:
               requests:
-                memory: "64Mi"
-                cpu: "100m"
-              limits:
                 memory: "128Mi"
                 cpu: "200m"
+              limits:
+                memory: "256Mi"
+                cpu: "500m"
