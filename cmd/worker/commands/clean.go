@@ -160,7 +160,10 @@ func runClean(cmd *cobra.Command, args []string) error {
 	fmt.Printf("\nType 'yes' to confirm deletion: ")
 
 	var confirmation string
-	fmt.Scanln(&confirmation)
+	if _, err := fmt.Scanln(&confirmation); err != nil {
+		log.Warn("failed to read confirmation", "error", err)
+		return fmt.Errorf("deletion cancelled: %w", err)
+	}
 
 	if confirmation != "yes" {
 		log.Info("deletion cancelled by user")
