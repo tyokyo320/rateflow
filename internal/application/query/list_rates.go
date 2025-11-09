@@ -3,6 +3,7 @@ package query
 import (
 	"context"
 	"log/slog"
+	"time"
 
 	"github.com/tyokyo320/rateflow/internal/application/dto"
 	"github.com/tyokyo320/rateflow/internal/domain/currency"
@@ -12,9 +13,11 @@ import (
 
 // ListRatesQuery represents a query for listing rates with pagination.
 type ListRatesQuery struct {
-	Pair     currency.Pair
-	Page     int
-	PageSize int
+	Pair      currency.Pair
+	Page      int
+	PageSize  int
+	StartDate *time.Time
+	EndDate   *time.Time
 }
 
 // ListRatesResult contains the paginated list of rates.
@@ -42,6 +45,11 @@ func NewListRatesHandler(
 
 // Handle executes the query.
 func (h *ListRatesHandler) Handle(ctx context.Context, query ListRatesQuery) (*ListRatesResult, error) {
+	// If date range is specified, use FindByDateRange instead of generic query
+	if query.StartDate != nil && query.EndDate != nil {
+		return h.handleDateRangeQuery(ctx, query)
+	}
+
 	// Build query options
 	opts := []genericrepo.QueryOption{
 		genericrepo.WithFilter("base_currency", query.Pair.Base().String()),
@@ -192,4 +200,93 @@ func (h *ListRatesHandler) toDTOInverted(r *rate.Rate, requestedPair currency.Pa
 		CreatedAt:     r.CreatedAt(),
 		UpdatedAt:     r.UpdatedAt(),
 	}
+}
+
+// handleDateRangeQuery handles queries with specific date ranges.
+func (h *ListRatesHandler) handleDateRangeQuery(ctx context.Context, query ListRatesQuery) (*ListRatesResult, error) {
+	// Try direct pair first
+	rates, err := h.rateRepo.FindByDateRange(ctx, query.Pair, *query.StartDate, *query.EndDate)
+	needsInversion := false
+
+	// Count direct results
+	directCount := int64(len(rates))
+
+	// Try inverse pair if no results or very few results
+	if err != nil || len(rates) == 0 || directCount < 10 {
+		h.logger.Debug("trying inverse pair for date range query",
+			"original_pair", query.Pair.String(),
+			"inverse_pair", query.Pair.Inverse().String(),
+			"direct_count", directCount,
+		)
+
+		inversePair := query.Pair.Inverse()
+		inverseRates, inverseErr := h.rateRepo.FindByDateRange(ctx, inversePair, *query.StartDate, *query.EndDate)
+		inverseCount := int64(len(inverseRates))
+
+		// Use inverse data if it has more records
+		if inverseErr == nil && inverseCount > directCount {
+			h.logger.Debug("using inverse pair data for date range",
+				"direct_count", directCount,
+				"inverse_count", inverseCount,
+			)
+			rates = inverseRates
+			needsInversion = true
+		} else if err != nil {
+			// If direct query failed and inverse also failed, return error
+			if inverseErr != nil {
+				h.logger.Error("failed to query date range for both directions",
+					"error", err,
+					"inverse_error", inverseErr,
+					"pair", query.Pair.String(),
+				)
+				return nil, err
+			}
+			// Direct failed but inverse succeeded
+			rates = inverseRates
+			needsInversion = true
+		}
+	}
+
+	// Sort by date descending (most recent first)
+	// Since FindByDateRange returns in ascending order
+	for i, j := 0, len(rates)-1; i < j; i, j = i+1, j-1 {
+		rates[i], rates[j] = rates[j], rates[i]
+	}
+
+	// Apply pagination manually
+	total := int64(len(rates))
+	startIdx := (query.Page - 1) * query.PageSize
+	endIdx := startIdx + query.PageSize
+
+	if startIdx >= len(rates) {
+		rates = []*rate.Rate{}
+	} else {
+		if endIdx > len(rates) {
+			endIdx = len(rates)
+		}
+		rates = rates[startIdx:endIdx]
+	}
+
+	// Convert to DTOs
+	items := make([]*dto.RateResponse, 0, len(rates))
+	for _, r := range rates {
+		if needsInversion {
+			items = append(items, h.toDTOInverted(r, query.Pair))
+		} else {
+			items = append(items, h.toDTO(r))
+		}
+	}
+
+	// Build pagination info
+	result := &ListRatesResult{
+		Items: items,
+		Pagination: genericrepo.Pagination{
+			Page:     query.Page,
+			PageSize: query.PageSize,
+			Total:    total,
+		},
+	}
+	result.Pagination.CalculateTotalPages()
+
+	return result, nil
 }

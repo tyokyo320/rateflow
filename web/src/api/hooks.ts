@@ -22,11 +22,13 @@ export const useLatestRate = (
 export const useHistoricalRates = (
   pair: string,
   page: number = 1,
-  pageSize: number = 30
+  pageSize: number = 30,
+  startDate?: string,
+  endDate?: string
 ): UseQueryResult<RateHistoryData, Error> => {
   return useQuery({
-    queryKey: ['historicalRates', pair, page, pageSize],
-    queryFn: () => rateApi.getHistoricalRates(pair, page, pageSize),
+    queryKey: ['historicalRates', pair, page, pageSize, startDate, endDate],
+    queryFn: () => rateApi.getHistoricalRates(pair, page, pageSize, startDate, endDate),
     enabled: !!pair,
   })
 }

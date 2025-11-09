@@ -60,13 +60,17 @@ export const rateApi = {
   getHistoricalRates: async (
     pair: string,
     page: number = 1,
-    pageSize: number = 30
+    pageSize: number = 30,
+    startDate?: string,
+    endDate?: string
   ): Promise<RateHistoryData> => {
+    const params: any = { pair, page, pageSize }
+    if (startDate) params.startDate = startDate
+    if (endDate) params.endDate = endDate
+
     const response = await apiClient.get<any>(
       `/api/v1/rates/list`,
-      {
-        params: { pair, page, pageSize },
-      }
+      { params }
     )
     return {
       items: response.data.data || [],

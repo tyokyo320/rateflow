@@ -3,7 +3,7 @@
 [![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat&logo=go)](https://go.dev/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB?style=flat&logo=react)](https://react.dev/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-1.5.1-blue.svg)](https://github.com/tyokyo320/rateflow/releases)
+[![Version](https://img.shields.io/badge/Version-1.5.2-blue.svg)](https://github.com/tyokyo320/rateflow/releases)
 
 > A modern, scalable multi-currency exchange rate tracking platform built with Go 1.25+ and React 18+
 

@@ -46,9 +46,16 @@ function RateChart({ pair, days, onDaysChange }: RateChartProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs().subtract(days, 'day'))
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs())
+  const [customDateRange, setCustomDateRange] = useState<[string, string] | null>(null)
 
-  // pageSize parameter controls how many records to fetch
-  const { data, isLoading, error, refetch } = useHistoricalRates(apiPair, 1, days + 1)
+  // Use custom date range if set, otherwise use days parameter
+  const { data, isLoading, error, refetch } = useHistoricalRates(
+    apiPair,
+    1,
+    days + 1,
+    customDateRange?.[0],
+    customDateRange?.[1]
+  )
 
   const chartData = useMemo<ChartDataPoint[]>(() => {
     if (!data?.items) return []
@@ -136,6 +143,8 @@ function RateChart({ pair, days, onDaysChange }: RateChartProps) {
 
   const handleDaysChange = (_: React.MouseEvent<HTMLElement>, newDays: number | null) => {
     if (newDays !== null) {
+      // Clear custom date range when switching to preset days
+      setCustomDateRange(null)
       onDaysChange(newDays)
     }
   }
@@ -154,6 +163,11 @@ function RateChart({ pair, days, onDaysChange }: RateChartProps) {
   const handleDateRangeApply = () => {
     if (startDate && endDate && startDate.isBefore(endDate)) {
       const numDays = endDate.diff(startDate, 'day')
+      // Set custom date range for API call
+      setCustomDateRange([
+        startDate.format('YYYY-MM-DD'),
+        endDate.format('YYYY-MM-DD')
+      ])
       onDaysChange(numDays)
       setAnchorEl(null)
     }
