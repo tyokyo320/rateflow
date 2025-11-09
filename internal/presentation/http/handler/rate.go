@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -195,6 +196,8 @@ func (h *RateHandler) List(c *gin.Context) {
 	pairStr := c.Query("pair")
 	pageStr := c.DefaultQuery("page", "1")
 	pageSizeStr := c.DefaultQuery("pageSize", "20")
+	startDateStr := c.Query("startDate")
+	endDateStr := c.Query("endDate")
 
 	page, err := strconv.Atoi(pageStr)
 	if err != nil || page < 1 {
@@ -225,11 +228,44 @@ func (h *RateHandler) List(c *gin.Context) {
 		}
 	}
 
+	// Parse date range if provided
+	var startDate, endDate *time.Time
+	if startDateStr != "" {
+		parsed, err := time.Parse("2006-01-02", startDateStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"error": gin.H{
+					"code":    "BAD_REQUEST",
+					"message": "invalid startDate format, expected YYYY-MM-DD",
+				},
+			})
+			return
+		}
+		startDate = &parsed
+	}
+	if endDateStr != "" {
+		parsed, err := time.Parse("2006-01-02", endDateStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"error": gin.H{
+					"code":    "BAD_REQUEST",
+					"message": "invalid endDate format, expected YYYY-MM-DD",
+				},
+			})
+			return
+		}
+		endDate = &parsed
+	}
+
 	// Execute query
 	result, err := h.listRatesHandler.Handle(c.Request.Context(), query.ListRatesQuery{
-		Pair:     pair,
-		Page:     page,
-		PageSize: pageSize,
+		Pair:      pair,
+		Page:      page,
+		PageSize:  pageSize,
+		StartDate: startDate,
+		EndDate:   endDate,
 	})
 	if err != nil {
 		h.logger.Error("failed to list rates", "error", err)

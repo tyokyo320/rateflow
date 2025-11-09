@@ -2,7 +2,7 @@
 
 [![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat&logo=go)](https://go.dev/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-1.5.1-blue.svg)](https://github.com/tyokyo320/rateflow/releases)
+[![Version](https://img.shields.io/badge/Version-1.5.2-blue.svg)](https://github.com/tyokyo320/rateflow/releases)
 
 > 基于 Go 1.25+ 和银联数据的现代化汇率追踪系统
 
