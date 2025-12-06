@@ -23,7 +23,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Install curl for health checks
-RUN apk --no-cache add curl
+RUN apk update && apk --no-cache add curl
 
 # Copy custom nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf

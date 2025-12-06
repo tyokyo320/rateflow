@@ -38,7 +38,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo \
 FROM alpine:latest
 
 # Install runtime dependencies
-RUN apk --no-cache add ca-certificates tzdata wget
+RUN apk update && apk --no-cache add ca-certificates tzdata wget
 
 # Set timezone
 ENV TZ=Asia/Shanghai
