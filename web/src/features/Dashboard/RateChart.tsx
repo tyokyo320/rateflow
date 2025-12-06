@@ -63,13 +63,15 @@ function RateChart({ pair, days, onDaysChange }: RateChartProps) {
     // For long date ranges (> 90 days), show year in date label
     const dateFormat = days > 90 ? 'YY-MM-DD' : 'MM-DD'
 
+    // Backend returns data in descending order (newest first)
+    // We need to reverse it to show oldest to newest (left to right on chart)
     return data.items
       .map((rate) => ({
         date: formatDate(rate.effectiveDate, dateFormat),
         rate: isInverted ? 1 / rate.rate : rate.rate,
         fullDate: rate.effectiveDate,
       }))
-      .reverse() // Show oldest to newest
+      .reverse()
   }, [data, isInverted, days])
 
   // Calculate Y-axis domain with appropriate scale based on rate range

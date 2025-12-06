@@ -71,7 +71,7 @@ func runClean(cmd *cobra.Command, args []string) error {
 		cfg.Logger.Level = "debug"
 	}
 	log := logger.New(cfg.Logger)
-	log = logger.WithContext(log, "rateflow-worker", "1.5.1")
+	log = logger.WithContext(log, "rateflow-worker", "1.5.3")
 
 	if cleanDryRun {
 		log.Warn("DRY RUN MODE - no data will be deleted")
