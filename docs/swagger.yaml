@@ -14,7 +14,7 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
   title: RateFlow API
-  version: 1.5.2
+  version: 1.5.3
 paths:
   /api/rates:
     get:

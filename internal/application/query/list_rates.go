@@ -247,11 +247,8 @@ func (h *ListRatesHandler) handleDateRangeQuery(ctx context.Context, query ListR
 		}
 	}
 
-	// Sort by date descending (most recent first)
-	// Since FindByDateRange returns in ascending order
-	for i, j := 0, len(rates)-1; i < j; i, j = i+1, j-1 {
-		rates[i], rates[j] = rates[j], rates[i]
-	}
+	// FindByDateRange already returns in descending order (most recent first)
+	// No need to reverse - data is already sorted correctly
 
 	// Apply pagination manually
 	total := int64(len(rates))
